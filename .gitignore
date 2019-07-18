@@ -1,3 +1,15 @@
+<<<<<<< HEAD
 .terraform/
 terraform.tfstate
 terraform.tfstate.backup
+=======
+#  Local .terraform directories
+**/.terraform/*
+
+# .tfstate files
+*.tfstate
+*.tfstate.*
+
+# .tfvars files
+*.tfvars
+>>>>>>> cea0b0c9477657ba5771f16aa9cfbd99ebc93c09
