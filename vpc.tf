@@ -1,7 +1,7 @@
 resource "aws_vpc" "default" {
     cidr_block = "${var.vpc_cidr}"
     enable_dns_hostnames = true
-    tags {
+    tags = {
         Name = "terraform-aws-vpc"
     }
 }
@@ -69,22 +69,22 @@ resource "aws_security_group" "nat" {
 
     vpc_id = "${aws_vpc.default.id}"
 
-    tags {
+    tags =  {
         Name = "NATSG"
     }
 }
 
 resource "aws_instance" "nat" {
-    ami = "ami-30913f47" # this is a special ami preconfigured to do NAT
-    availability_zone = "eu-west-1a"
-    instance_type = "m1.small"
+    ami = "ami-06705195ce845509c" # this is a special ami preconfigured to do NAT
+    availability_zone = "ap-southeast-2a"
+    instance_type = "t2.micro"
     key_name = "${var.aws_key_name}"
     vpc_security_group_ids = ["${aws_security_group.nat.id}"]
-    subnet_id = "${aws_subnet.eu-west-1a-public.id}"
+    subnet_id = "${aws_subnet.ap-southeast-2a-public.id}"
     associate_public_ip_address = true
     source_dest_check = false
 
-    tags {
+    tags = {
         Name = "VPC NAT"
     }
 }
@@ -97,18 +97,18 @@ resource "aws_eip" "nat" {
 /*
   Public Subnet
 */
-resource "aws_subnet" "eu-west-1a-public" {
+resource "aws_subnet" "ap-southeast-2a-public" {
     vpc_id = "${aws_vpc.default.id}"
 
     cidr_block = "${var.public_subnet_cidr}"
-    availability_zone = "eu-west-1a"
+    availability_zone = "ap-southeast-2a"
 
-    tags {
+    tags = {
         Name = "Public Subnet"
     }
 }
 
-resource "aws_route_table" "eu-west-1a-public" {
+resource "aws_route_table" "ap-southeast-2a-public" {
     vpc_id = "${aws_vpc.default.id}"
 
     route {
@@ -116,31 +116,31 @@ resource "aws_route_table" "eu-west-1a-public" {
         gateway_id = "${aws_internet_gateway.default.id}"
     }
 
-    tags {
+    tags = {
         Name = "Public Subnet"
     }
 }
 
-resource "aws_route_table_association" "eu-west-1a-public" {
-    subnet_id = "${aws_subnet.eu-west-1a-public.id}"
-    route_table_id = "${aws_route_table.eu-west-1a-public.id}"
+resource "aws_route_table_association" "ap-southeast-2a-public" {
+    subnet_id = "${aws_subnet.ap-southeast-2a-public.id}"
+    route_table_id = "${aws_route_table.ap-southeast-2a-public.id}"
 }
 
 /*
   Private Subnet
 */
-resource "aws_subnet" "eu-west-1a-private" {
+resource "aws_subnet" "ap-southeast-2a-private" {
     vpc_id = "${aws_vpc.default.id}"
 
     cidr_block = "${var.private_subnet_cidr}"
-    availability_zone = "eu-west-1a"
+    availability_zone = "ap-southeast-2a"
 
-    tags {
+    tags = {
         Name = "Private Subnet"
     }
 }
 
-resource "aws_route_table" "eu-west-1a-private" {
+resource "aws_route_table" "ap-southeast-2a-private" {
     vpc_id = "${aws_vpc.default.id}"
 
     route {
@@ -148,12 +148,12 @@ resource "aws_route_table" "eu-west-1a-private" {
         instance_id = "${aws_instance.nat.id}"
     }
 
-    tags {
+    tags = {
         Name = "Private Subnet"
     }
 }
 
-resource "aws_route_table_association" "eu-west-1a-private" {
-    subnet_id = "${aws_subnet.eu-west-1a-private.id}"
-    route_table_id = "${aws_route_table.eu-west-1a-private.id}"
+resource "aws_route_table_association" "ap-southeast-2a-private" {
+    subnet_id = "${aws_subnet.ap-southeast-2a-private.id}"
+    route_table_id = "${aws_route_table.ap-southeast-2a-private.id}"
 }
